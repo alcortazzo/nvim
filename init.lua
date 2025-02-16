@@ -121,6 +121,20 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- [[ Configure SwiftFormatting on save ]]
+
+-- Create an autocommand group for Swift formatting
+vim.api.nvim_create_augroup('SwiftFormat', { clear = true })
+
+-- Add an autocommand to run `swiftformat .` on saving a Swift file
+vim.api.nvim_create_autocmd('BufWritePost', {
+  group = 'SwiftFormat',
+  pattern = '*.swift',
+  callback = function()
+    vim.fn.system 'swiftformat .'
+  end,
+})
+
 -- [[ Configure and install plugins ]]
 
 require('lazy').setup({
