@@ -808,12 +808,13 @@ require('lazy').setup({
 
   { -- Confogure colorscheme.
     -- To see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    -- 'bluz71/vim-moonfly-colors',
-    'rebelot/kanagawa.nvim',
+    'bluz71/vim-moonfly-colors',
+    -- 'rebelot/kanagawa.nvim',
     -- 'ellisonleao/gruvbox.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
-      vim.cmd.colorscheme 'kanagawa-dragon'
+      vim.cmd.colorscheme 'moonfly'
+      -- vim.cmd.colorscheme 'kanagawa-dragon'
       -- vim.cmd.colorscheme 'gruvbox'
     end,
   },
