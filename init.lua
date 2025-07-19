@@ -33,6 +33,7 @@ vim.keymap.set('v', '<Tab>', '>gv', { noremap = true, silent = true }) -- Tab in
 vim.keymap.set('v', '<S-Tab>', '<gv', { noremap = true, silent = true }) -- Shift+Tab outdents visually selected text
 vim.keymap.set('n', '<Tab>', ':bnext<CR>')         -- Next buffer
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>')   -- Previous buffer
+vim.api.nvim_create_user_command('Q', 'q', {})     -- Neovim config to allow :Q as well as :q to quit
 
 -- Indentation
 vim.opt.expandtab = true        -- Use spaces instead of tabs
