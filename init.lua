@@ -33,7 +33,6 @@ vim.keymap.set('v', '<Tab>', '>gv', { noremap = true, silent = true }) -- Tab in
 vim.keymap.set('v', '<S-Tab>', '<gv', { noremap = true, silent = true }) -- Shift+Tab outdents visually selected text
 vim.keymap.set('n', '<Tab>', ':bnext<CR>')         -- Next buffer
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>')   -- Previous buffer
-vim.api.nvim_create_user_command('Q', 'q', {})     -- Neovim config to allow :Q as well as :q to quit
 
 -- Indentation
 vim.opt.expandtab = true        -- Use spaces instead of tabs
@@ -51,4 +50,36 @@ vim.opt.splitright = true       -- Vertical splits open to the right
 vim.opt.splitbelow = true       -- Horizontal splits open below
 
 -- Performance
--- vim.opt.updatetime = 300        -- Faster completion (?) (default is 4000ms)
+vim.opt.updatetime = 300        -- Faster completion (?) (default is 4000ms)
+
+-- Leader keys (set before lazy.nvim)
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Setup lazy.nvim
+require("lazy").setup({
+  spec = {
+    { import = "plugins" },
+  },
+  install = { colorscheme = { "habamax" } },
+  checker = { enabled = true },
+})
+
+
