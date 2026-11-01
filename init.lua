@@ -56,30 +56,21 @@ vim.opt.updatetime = 300        -- Faster completion (?) (default is 4000ms)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- Bootstrap lazy.nvim
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
+-- Clipboard over SSH: use OSC 52 so yanks on the remote machine reach the local system clipboard
+vim.opt.clipboard = "unnamedplus"          -- Route all yank/delete/change operations through the + register
+
+if vim.env.SSH_TTY then                    -- Only apply when running inside an SSH session
+  local osc52 = require("vim.ui.clipboard.osc52")  -- Built-in OSC 52 helper (Neovim 0.10+)
+  vim.g.clipboard = {
+    name = "OSC 52",                       -- Provider name shown in :checkhealth
+    copy = {
+      ["+"] = osc52.copy("+"),             -- Copy to system clipboard via terminal escape sequence
+      ["*"] = osc52.copy("*"),             -- Copy to primary selection (same behavior in most terminals)
+    },
+    -- OSC 52 paste would need clipboard-read; paste from Neovim's own register instead
+    paste = {
+      ["+"] = function() return { vim.fn.getreg('"', 1, true), vim.fn.getregtype('"') } end,  -- Paste from unnamed register
+      ["*"] = function() return { vim.fn.getreg('"', 1, true), vim.fn.getregtype('"') } end,  -- Paste from unnamed register
+    },
+  }
 end
-vim.opt.rtp:prepend(lazypath)
-
--- Setup lazy.nvim
--- require("lazy").setup({
---   spec = {
---     { import = "plugins" },
---   },
---   install = { colorscheme = { "habamax" } },
---   checker = { enabled = true },
--- })
-
-
